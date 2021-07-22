@@ -1,22 +1,43 @@
+import models.User;
 import org.openqa.selenium.By;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class LoginTest extends TestBase{
 
-
+@BeforeMethod
+public void pricondition(){
+    if(!app.userHalper().isLogged()){
+        app.userHalper().logout();
+    }
+}
  @Test
   public void loginTestPositive(){
+     //будем вызывать методы реализованные (созданные) в классе UserHalper
+     //ApplicationManager хранит ссылку на userHalper, внутри userHalper доступны его методы и его родителей
+     //наведя на метод (он красный, т. к. его ещё нет) openLoginForm(), создадим его (alt+enter) в классе UserHalper
+     app.userHalper().openLoginForm();
+     app.userHalper().fillLoginForm("borismit@inbox.ru","Aa123456$");
+     app.userHalper().logIn();
+     app.userHalper().pause(3000);//метод pause() хранится в HelperBase, куда мы достаём через его ребёнка userHalper
 
-    click(By.xpath("//a[.='LOGIN']"));
-
-    type(By.xpath("//input[@placeholder='Email']"), "borismit@inbox.ru");
-    type(By.xpath("//input[@placeholder='Password']"), "Aa123456$");
-    click(By.xpath("//button[.=' Login']"));
-    pause(3000);
-
-     String SignOut=getText(By.xpath("//button[.='Sign Out']"));
-     Assert.assertEquals(SignOut, "Sign Out");
+     String SignOut=app.userHalper().getText(By.xpath("//button[.='Sign Out']"));//метод getText() тоже хранится в HelperBase, куда мы достаём через его ребёнка userHalper
+     Assert.assertEquals(SignOut, "Sign Out");//если после логина появляется кнопка SignOut (узнаём её по тексту на ней), значит мы залогинились
 
  }
+ @Test
+ //метод, который принимает объект User, которому надо залогиниться
+ public void loginTestPositiveDto(){
+     User user = new User().withEmale("borismit@inbox.ru").withPassword("Aa123456$");//через "." выбираем только те поля, которые нам надо заполнить
+
+     app.userHalper().openLoginForm();
+     app.userHalper().fillLoginForm(user);//в классе UserHelper создадим метод fillLoginForm(User user)
+     app.userHalper().logIn();
+     app.userHalper().pause(3000);//метод pause() хранится в HelperBase, куда мы достаём через его ребёнка userHalper
+
+     String SignOut=app.userHalper().getText(By.xpath("//button[.='Sign Out']"));//метод getText() тоже хранится в HelperBase, куда мы достаём через его ребёнка userHalper
+     Assert.assertEquals(SignOut, "Sign Out");//если после логина появляется кнопка SignOut (узнаём её по тексту на ней), значит мы залогинились
+ }
+
 }
