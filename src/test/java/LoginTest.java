@@ -24,7 +24,6 @@ public void pricondition(){
 
      String SignOut=app.userHalper().getText(By.xpath("//button[.='Sign Out']"));//метод getText() тоже хранится в HelperBase, куда мы достаём через его ребёнка userHalper
      Assert.assertEquals(SignOut, "Sign Out");//если после логина появляется кнопка SignOut (узнаём её по тексту на ней), значит мы залогинились
-
  }
  @Test
  //метод, который принимает объект User, которому надо залогиниться
@@ -39,5 +38,19 @@ public void pricondition(){
      String SignOut=app.userHalper().getText(By.xpath("//button[.='Sign Out']"));//метод getText() тоже хранится в HelperBase, куда мы достаём через его ребёнка userHalper
      Assert.assertEquals(SignOut, "Sign Out");//если после логина появляется кнопка SignOut (узнаём её по тексту на ней), значит мы залогинились
  }
+
+ @Test
+    public void loginTestWithWrongPassword(){
+    User user = new User()
+            .withEmale("borismit@inbox.ru")
+            .withPassword("Aa123456");//вводим не правильный Password
+    app.userHalper().openLoginRegForm();//написал старый метод с ноым названием openLoginRegForm()
+    app.userHalper().fillLoginForm(user);//использовал старый метод со старым названим (уже был написан мною)
+    app.userHalper().clickLoginButton();//написал старый метод с ноым названием clickLoginButton()
+    //app.userHalper().pause(3000);//чтобы успела отрисоваться картинка. Удобно использовать для отладки
+    app.userHalper().acceptAlert();
+     //проверяем есть ли кнопка LOGIN, если есть, то не залогинились
+    Assert.assertTrue(app.userHalper().isLogged());//использовал старый метод со старым названим (уже был написан мною)
+}
 
 }
